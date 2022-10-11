@@ -11,8 +11,9 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Parcelable;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
+import androidx.core.view.MenuItemCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
@@ -140,7 +141,7 @@ public class CommentsActivity extends BaseListActivity implements
 
                     String articleURL = ArticleReaderActivity
                             .getArticleViewURL(mPost, Settings
-                                    .getHtmlProvider(CommentsActivity.this),
+                                            .getHtmlProvider(CommentsActivity.this),
                                     CommentsActivity.this);
                     MainActivity.openURLInBrowser(articleURL,
                             CommentsActivity.this);
@@ -219,26 +220,26 @@ public class CommentsActivity extends BaseListActivity implements
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-        case R.id.menu_refresh:
-            startFeedLoading();
-            return true;
-        case android.R.id.home:
-            finish();
-            return true;
-        case R.id.menu_share:
-            Intent shareIntent = new Intent(Intent.ACTION_SEND);
-            shareIntent.setType("text/plain");
-            shareIntent.putExtra(Intent.EXTRA_SUBJECT, mPost.getTitle()
-                    + " | Hacker News");
-            shareIntent
-                    .putExtra(
-                            Intent.EXTRA_TEXT,
-                            "https://news.ycombinator.com/item?id="
-                                    + mPost.getPostID());
-            startActivity(Intent.createChooser(shareIntent,
-                    getString(R.string.share_comments_url)));
-        default:
-            return super.onOptionsItemSelected(item);
+            case R.id.menu_refresh:
+                startFeedLoading();
+                return true;
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.menu_share:
+                Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                shareIntent.setType("text/plain");
+                shareIntent.putExtra(Intent.EXTRA_SUBJECT, mPost.getTitle()
+                        + " | Hacker News");
+                shareIntent
+                        .putExtra(
+                                Intent.EXTRA_TEXT,
+                                "https://news.ycombinator.com/item?id="
+                                        + mPost.getPostID());
+                startActivity(Intent.createChooser(shareIntent,
+                        getString(R.string.share_comments_url)));
+            default:
+                return super.onOptionsItemSelected(item);
         }
     }
 
@@ -248,15 +249,15 @@ public class CommentsActivity extends BaseListActivity implements
 
     @Override
     public void onTaskFinished(int taskCode, TaskResultCode code,
-            HNPostComments result, Object tag) {
+                               HNPostComments result, Object tag) {
         if (code.equals(TaskResultCode.Success) && mCommentsListAdapter != null) {
             showComments(result);
         } else
-            if (!code.equals(TaskResultCode.Success)) {
-                Toast.makeText(this,
-                        getString(R.string.error_unable_to_retrieve_comments),
-                        Toast.LENGTH_SHORT).show();
-            }
+        if (!code.equals(TaskResultCode.Success)) {
+            Toast.makeText(this,
+                    getString(R.string.error_unable_to_retrieve_comments),
+                    Toast.LENGTH_SHORT).show();
+        }
         updateEmptyView();
         setShowRefreshing(false);
     }
@@ -291,7 +292,7 @@ public class CommentsActivity extends BaseListActivity implements
             boolean registeredUserChanged = result != null
                     && result.getUserAcquiredFor() != null
                     && (!result.getUserAcquiredFor().equals(
-                            Settings.getUserName(CommentsActivity.this)));
+                    Settings.getUserName(CommentsActivity.this)));
             // Only show comments if we last fetched them for the current user
             // and we have comments
             if (!registeredUserChanged && result != null) {
@@ -316,13 +317,13 @@ public class CommentsActivity extends BaseListActivity implements
                 mFontSizeText = 14;
                 mFontSizeMetadata = 12;
             } else
-                if (fontSize.equals(getString(R.string.pref_fontsize_normal))) {
-                    mFontSizeText = 16;
-                    mFontSizeMetadata = 14;
-                } else {
-                    mFontSizeText = 20;
-                    mFontSizeMetadata = 18;
-                }
+            if (fontSize.equals(getString(R.string.pref_fontsize_normal))) {
+                mFontSizeText = 16;
+                mFontSizeMetadata = 14;
+            } else {
+                mFontSizeText = 20;
+                mFontSizeMetadata = 18;
+            }
             return true;
         }
 
@@ -435,12 +436,12 @@ public class CommentsActivity extends BaseListActivity implements
             mIsLoggedIn = Settings.isUserLoggedIn(CommentsActivity.this);
             mUpVotingEnabled = !mIsLoggedIn
                     || (mComment.getUpvoteUrl(Settings
-                            .getUserName(CommentsActivity.this)) != null && !mVotedComments
-                            .contains(mComment));
+                    .getUserName(CommentsActivity.this)) != null && !mVotedComments
+                    .contains(mComment));
             mDownVotingEnabled = mIsLoggedIn
                     && (mComment.getDownvoteUrl(Settings
-                            .getUserName(CommentsActivity.this)) != null && !mVotedComments
-                            .contains(mComments));
+                    .getUserName(CommentsActivity.this)) != null && !mVotedComments
+                    .contains(mComments));
 
             mItems = new ArrayList<CharSequence>();
 
@@ -617,7 +618,7 @@ public class CommentsActivity extends BaseListActivity implements
 
         @Override
         public View getView(final int position, View convertView,
-                ViewGroup parent) {
+                            ViewGroup parent) {
             if (convertView == null) {
                 convertView = mInflater.inflate(R.layout.comments_list_item,
                         null);
@@ -677,7 +678,7 @@ public class CommentsActivity extends BaseListActivity implements
         LinearLayout spacersContainer;
 
         public void setComment(HNComment comment, int commentLevelIndentPx,
-                Context c, int commentTextSize, int metadataTextSize) {
+                               Context c, int commentTextSize, int metadataTextSize) {
             textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, commentTextSize);
             textView.setTextColor(comment.getColor());
             textView.setText(Html.fromHtml(comment.getText()));
@@ -728,27 +729,27 @@ public class CommentsActivity extends BaseListActivity implements
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         switch (requestCode) {
-        case ACTIVITY_LOGIN:
-            if (resultCode == RESULT_OK) {
-                if (mPendingVote != null) {
-                    mComments = new HNPostComments();
-                    mCommentsListAdapter.notifyDataSetChanged();
-                    startFeedLoading();
-                    Toast.makeText(this,
-                            getString(R.string.login_success_reloading),
-                            Toast.LENGTH_SHORT).show();
-                }
-            } else
+            case ACTIVITY_LOGIN:
+                if (resultCode == RESULT_OK) {
+                    if (mPendingVote != null) {
+                        mComments = new HNPostComments();
+                        mCommentsListAdapter.notifyDataSetChanged();
+                        startFeedLoading();
+                        Toast.makeText(this,
+                                getString(R.string.login_success_reloading),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                } else
                 if (resultCode == RESULT_CANCELED) {
                     Toast.makeText(this,
                             getString(R.string.error_login_to_vote),
                             Toast.LENGTH_LONG).show();
                 }
-        case ACTIVITY_SPOTLIGHT:
-            // The user tapped in the spotlight area
-            if (resultCode == RESULT_OK) {
-                openArticleReader();
-            }
+            case ACTIVITY_SPOTLIGHT:
+                // The user tapped in the spotlight area
+                if (resultCode == RESULT_OK) {
+                    openArticleReader();
+                }
         }
     }
 }

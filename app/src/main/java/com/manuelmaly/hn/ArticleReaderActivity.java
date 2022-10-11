@@ -7,15 +7,16 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.support.v4.view.MenuItemCompat;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.ActionBarActivity;
+
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.MenuItemCompat;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
+
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.TextView;
@@ -33,7 +34,7 @@ import org.androidannotations.annotations.ViewById;
 import java.net.URLEncoder;
 
 @EActivity(R.layout.article_activity)
-public class ArticleReaderActivity extends ActionBarActivity {
+public class ArticleReaderActivity extends AppCompatActivity {
 
   public static final int ACTIVITY_LOGIN = 137;
 
@@ -122,7 +123,7 @@ public class ArticleReaderActivity extends ActionBarActivity {
           int[] posArray = new int[2];
           mActionbarTitle.getLocationInWindow( posArray );
           Intent intent = SpotlightActivity.intentForSpotlightActivity( ArticleReaderActivity.this, posArray[0],
-              mActionbarTitle.getWidth(), 0, getSupportActionBar().getHeight(), getString( R.string.click_on_article ) );
+                  mActionbarTitle.getWidth(), 0, getSupportActionBar().getHeight(), getString( R.string.click_on_article ) );
           startActivityForResult( intent, ACTIVITY_LOGIN );
           overridePendingTransition( android.R.anim.fade_in, android.R.anim.fade_out );
         }
@@ -157,25 +158,25 @@ public class ArticleReaderActivity extends ActionBarActivity {
   @Override
   public boolean onOptionsItemSelected( MenuItem item ) {
     switch (item.getItemId()) {
-    case android.R.id.home:
-      finish();
-      return true;
-    case R.id.menu_refresh:
-      if (mWebViewIsLoading) {
-        mWebView.stopLoading();
-      } else {
-        mWebView.loadUrl( getArticleViewURL( mPost, mHtmlProvider, ArticleReaderActivity.this ) );
-      }
-      return true;
-    case R.id.menu_share:
-      Intent shareIntent = new Intent( Intent.ACTION_SEND );
-      shareIntent.setType( "text/plain" );
-      shareIntent.putExtra( Intent.EXTRA_SUBJECT, mPost.getTitle() );
-      shareIntent.putExtra( Intent.EXTRA_TEXT, mWebView.getUrl() );
-      startActivity( Intent.createChooser( shareIntent, getString( R.string.share_article_url ) ) );
-      return true;
-    default:
-      return super.onOptionsItemSelected( item );
+      case android.R.id.home:
+        finish();
+        return true;
+      case R.id.menu_refresh:
+        if (mWebViewIsLoading) {
+          mWebView.stopLoading();
+        } else {
+          mWebView.loadUrl( getArticleViewURL( mPost, mHtmlProvider, ArticleReaderActivity.this ) );
+        }
+        return true;
+      case R.id.menu_share:
+        Intent shareIntent = new Intent( Intent.ACTION_SEND );
+        shareIntent.setType( "text/plain" );
+        shareIntent.putExtra( Intent.EXTRA_SUBJECT, mPost.getTitle() );
+        shareIntent.putExtra( Intent.EXTRA_TEXT, mWebView.getUrl() );
+        startActivity( Intent.createChooser( shareIntent, getString( R.string.share_article_url ) ) );
+        return true;
+      default:
+        return super.onOptionsItemSelected( item );
     }
   }
 
@@ -225,8 +226,8 @@ public class ArticleReaderActivity extends ActionBarActivity {
   @Override
   protected void onDestroy() {
     mWebView.loadData( "", "text/html", "utf-8" ); // Destroy any players (e.g.
-                                                   // Youtube, Soundcloud) if
-                                                   // any
+    // Youtube, Soundcloud) if
+    // any
     // Calling mWebView.destroy(); would not always work according to here:
     // http://stackoverflow.com/questions/6201615/how-do-i-stop-flash-after-leaving-a-webview?rq=1
 
@@ -236,10 +237,10 @@ public class ArticleReaderActivity extends ActionBarActivity {
   @Override
   public void onActivityResult( int requestCode, int resultCode, Intent data ) {
     switch (requestCode) {
-    case ACTIVITY_LOGIN:
-      if (resultCode == RESULT_OK) {
-        launchCommentsActivity();
-      }
+      case ACTIVITY_LOGIN:
+        if (resultCode == RESULT_OK) {
+          launchCommentsActivity();
+        }
     }
   }
 

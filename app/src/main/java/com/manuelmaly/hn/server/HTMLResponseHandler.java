@@ -1,10 +1,10 @@
 package com.manuelmaly.hn.server;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.StatusLine;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.ResponseHandler;
+import cz.msebera.android.httpclient.HttpResponse;
+import cz.msebera.android.httpclient.StatusLine;
+import cz.msebera.android.httpclient.client.ClientProtocolException;
+import cz.msebera.android.httpclient.client.HttpClient;
+import cz.msebera.android.httpclient.client.ResponseHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -16,11 +16,11 @@ import java.io.IOException;
 public class HTMLResponseHandler implements ResponseHandler<String> {
 
     private IAPICommand<String> mCommand;
-    
+
     public HTMLResponseHandler(IAPICommand<String> command, HttpClient client) {
         mCommand = command;
     }
-    
+
     @Override
     public String handleResponse(HttpResponse response)
             throws ClientProtocolException, IOException {

@@ -6,7 +6,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.AsyncTask;
-import android.support.v4.content.LocalBroadcastManager;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
 import com.manuelmaly.hn.App;
 import com.manuelmaly.hn.reuse.CancelableRunnable;
@@ -24,7 +24,7 @@ import java.lang.ref.SoftReference;
  * {@link LocalBroadcastManager}). Meaning, there will be no Zombie tasks
  * performing stuff for nothing (e.g. because their callback Activity has been
  * destroyed because of orientation change).
- * 
+ *
  * @author manuelmaly
  * @param <T>
  *            result type
@@ -63,7 +63,7 @@ public abstract class BaseTask<T extends Serializable> implements Runnable {
     }
 
     /**
-     * 
+     *
      * @param tag
      */
     public void setTag(Object tag) {
@@ -73,7 +73,7 @@ public abstract class BaseTask<T extends Serializable> implements Runnable {
     /**
      * Registers the given {@link BroadcastReceiver} to this task's
      * finished-notification.
-     * 
+     *
      * @param receiver
      */
     public void registerForFinishedNotification(BroadcastReceiver receiver) {
@@ -84,23 +84,23 @@ public abstract class BaseTask<T extends Serializable> implements Runnable {
     /**
      * Schedules behaviour to be executed when this task has finished, for the
      * given Activity.
-     * 
+     *
      * @param activity
      * @param finishedHandler
      * @param resultClazz
      */
     public void setOnFinishedHandler(Activity activity, ITaskFinishedHandler<T> finishedHandler,
-        final Class<T> resultClazz) {
+                                     final Class<T> resultClazz) {
         final SoftReference<Activity> activityRef = new SoftReference<Activity>(activity);
         final SoftReference<ITaskFinishedHandler<T>> finishedHandlerRef = new SoftReference<ITaskFinishedHandler<T>>(
-            finishedHandler);
+                finishedHandler);
         BroadcastReceiver finishedListener = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
                 LocalBroadcastManager.getInstance(App.getInstance()).unregisterReceiver(this);
 
                 if (activityRef == null || activityRef.get() == null || finishedHandlerRef == null
-                    || finishedHandlerRef.get() == null)
+                        || finishedHandlerRef.get() == null)
                     return;
 
                 // Make hard references until the end of processing, so we don't
@@ -109,7 +109,7 @@ public abstract class BaseTask<T extends Serializable> implements Runnable {
                 final ITaskFinishedHandler<T> finishedHandler = finishedHandlerRef.get();
 
                 int lowLevelErrorCode = intent.getIntExtra(BaseTask.BROADCAST_INTENT_EXTRA_ERROR,
-                    IAPICommand.ERROR_NONE);
+                        IAPICommand.ERROR_NONE);
                 final int errorCode;
                 final T result;
                 Serializable rawResult = intent.getSerializableExtra(BaseTask.BROADCAST_INTENT_EXTRA_RESULT);
@@ -117,19 +117,19 @@ public abstract class BaseTask<T extends Serializable> implements Runnable {
                     result = resultClazz.cast(rawResult);
                     errorCode = lowLevelErrorCode;
                 } else {
-                	result = null;
-                	if (lowLevelErrorCode == IAPICommand.ERROR_NONE) {
-                		// We have no error so far, but cannot cast the result data:
-                		errorCode = IAPICommand.ERROR_UNKNOWN;
-                	} else {
-                		errorCode = lowLevelErrorCode;
-                	}
+                    result = null;
+                    if (lowLevelErrorCode == IAPICommand.ERROR_NONE) {
+                        // We have no error so far, but cannot cast the result data:
+                        errorCode = IAPICommand.ERROR_UNKNOWN;
+                    } else {
+                        errorCode = lowLevelErrorCode;
+                    }
                 }
 
                 Runnable r = new Runnable() {
                     public void run() {
                         finishedHandler
-                            .onTaskFinished(mTaskCode, TaskResultCode.fromErrorCode(errorCode), result, mTag);
+                                .onTaskFinished(mTaskCode, TaskResultCode.fromErrorCode(errorCode), result, mTag);
                     }
                 };
                 Run.onUiThread(r, activity);
